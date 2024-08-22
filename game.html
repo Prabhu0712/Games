@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Guess Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-image: url("2nd.jpg");
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            border-radius: 20px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        .alert {
+            font-size: 2.5rem;
+            color: #f39c12;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .form-control {
+            border-radius: 10px;
+            box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body onload="initializeGame()">
+    <div class="container text-center">
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-dice"></i> Random Guess Game
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="card" style="width: 22rem;">
+                <img src="1st.jpg" class="card-img-top" alt="Game Image">
+                <div class="card-body">
+                    <h5 class="card-title">Guess a number between 1 and 100</h5>
+                    <input type="number" id="userInput" class="form-control mb-3" min="1" max="100" placeholder="Enter your number">
+                    <button id="submit" class="btn btn-primary" onclick="guessNumber()">Submit</button>
+                    <div id="result" class="mt-3"></div>
+                    <div id="score" class="mt-3">Attempts: 0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">Congratulations!</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="successModalBody">
+            <!-- Success message will be injected here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="restartGame()">Play Again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        let randomnumber;
+        let attempts;
+
+        function initializeGame() {
+            randomnumber = Math.floor(Math.random() * 101);
+            attempts = 0;
+            document.getElementById('score').textContent = 'Attempts: ' + attempts;
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = '';
+            document.getElementById('submit').disabled = false;
+            document.getElementById('userInput').value = ''; // Clear the input field
+        }
+
+        function guessNumber() {
+            let result = document.getElementById('result');
+            let submit = document.getElementById('submit');
+            const guess = Number(document.getElementById('userInput').value);
+            attempts++;
+            document.getElementById('score').textContent = 'Attempts: ' + attempts;
+
+            if (guess === randomnumber) {
+                result.textContent = 'Success!';
+                result.className = 'alert alert-success';
+                submit.disabled = true;
+                // Show the success modal with attempts count
+                let successModalBody = document.getElementById('successModalBody');
+                successModalBody.innerHTML = `You have found the number in ${attempts} attempts!`;
+                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            } else if (guess < randomnumber) {
+                result.textContent = 'Too low!';
+                result.className = 'alert alert-danger';
+            } else {
+                result.textContent = 'Too high!';
+                result.className = 'alert alert-danger';
+            }
+        }
+
+        function restartGame() {
+            // Close the modal
+            var successModal = bootstrap.Modal.getInstance(document.getElementById('successModal'));
+            successModal.hide();
+            // Initialize the game
+            initializeGame();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
